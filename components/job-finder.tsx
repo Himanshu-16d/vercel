@@ -15,9 +15,11 @@ import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import type { JobListing, JobSearchParams, ResumeData } from "@/types/resume"
+import type { JobListing, JobSearchParams, ResumeData, LinkedInProfile } from "@/types/resume"
 import JobListingCard from "@/components/job-listing-card"
 import ResumeUpload from "@/components/resume-upload"
+import LinkedInIntegration from "@/components/linkedin-integration"
+import { importLinkedInProfile, getJobRecommendations } from "@/actions/linkedin-actions"
 
 export default function JobFinder() {
   const [searchParams, setSearchParams] = useState<JobSearchParams>({
@@ -33,6 +35,7 @@ export default function JobFinder() {
   const [isLinkedInConnected, setIsLinkedInConnected] = useState(false)
   const [activeTab, setActiveTab] = useState("search")
   const [resumeEntryMethod, setResumeEntryMethod] = useState<"upload" | "manual">("upload")
+  const [linkedInProfile, setLinkedInProfile] = useState<LinkedInProfile | null>(null)
 
   const handleSearchParamChange = (key: keyof JobSearchParams, value: string | boolean) => {
     setSearchParams((prev) => ({
@@ -47,7 +50,6 @@ export default function JobFinder() {
 
   const handleManualResumeChange = (field: string, value: string) => {
     if (!resumeData) {
-      // Initialize with default data if null
       setResumeData({
         personalInfo: {
           name: "",
@@ -92,7 +94,6 @@ export default function JobFinder() {
       return
     }
 
-    // Handle nested fields
     if (field.includes(".")) {
       const [parent, child] = field.split(".")
       setResumeData({
@@ -119,12 +120,10 @@ export default function JobFinder() {
     setIsLoading(true)
     try {
       const results = await findJobs(searchParams, resumeData)
-      // Ensure we always set an array, even if results is undefined or null
       setJobListings(results || [])
       setActiveTab("results")
     } catch (error) {
       console.error("Error finding jobs:", error)
-      // Set empty array on error
       setJobListings([])
     } finally {
       setIsLoading(false)
@@ -139,6 +138,22 @@ export default function JobFinder() {
       }
     } catch (error) {
       console.error("Error connecting to LinkedIn:", error)
+    }
+  }
+
+  const handleLinkedInProfile = async (profile: LinkedInProfile) => {
+    try {
+      const result = await importLinkedInProfile(profile)
+      if (result.success) {
+        setLinkedInProfile(profile)
+        const recommendations = await getJobRecommendations(profile.id)
+        if (recommendations.success) {
+          setJobListings(recommendations.jobs)
+          setActiveTab("results")
+        }
+      }
+    } catch (error) {
+      console.error("Error handling LinkedIn profile:", error)
     }
   }
 

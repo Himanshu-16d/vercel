@@ -4,8 +4,6 @@ import { generateText } from "ai"
 import { groq } from "@ai-sdk/groq"
 import type { JobListing, JobSearchParams, ResumeData } from "@/types/resume"
 
-// Update the findJobs function to ensure it always returns an array
-
 export async function findJobs(searchParams: JobSearchParams, resumeData: ResumeData | null): Promise<JobListing[]> {
   try {
     // Convert search params and resume data to string format for the AI
@@ -32,7 +30,7 @@ export async function findJobs(searchParams: JobSearchParams, resumeData: Resume
         - Company name
         - Location (indicate if remote)
         - Description (2-3 sentences)
-        - URL (fictional but realistic)
+        - URL (use real job board URLs like linkedin.com/jobs/, indeed.com/jobs/, glassdoor.com/job-listing/, etc.)
         - Posted date (within the last 30 days)
         - Salary range (optional)
         - Required skills (5-7 relevant skills)
@@ -77,16 +75,7 @@ export async function findJobs(searchParams: JobSearchParams, resumeData: Resume
   }
 }
 
-export async function connectLinkedIn(): Promise<{ success: boolean; message: string }> {
-  // This would normally connect to LinkedIn's API
-  // For now, we'll just simulate a successful connection
-  return {
-    success: true,
-    message: "Successfully connected to LinkedIn",
-  }
-}
-
-// Ensure each mock job listing has a skills array
+// Ensure each mock job listing has a skills array and real job board URLs
 function getMockJobListings(): JobListing[] {
   return [
     {
@@ -96,7 +85,7 @@ function getMockJobListings(): JobListing[] {
       location: "San Francisco, CA (Remote)",
       description:
         "We're looking for a Senior Frontend Developer to join our team. You'll be responsible for building user interfaces for our web applications using React and TypeScript.",
-      url: "https://example.com/jobs/senior-frontend-developer",
+      url: "https://www.linkedin.com/jobs/view/senior-frontend-developer-at-techcorp-inc-3824591",
       postedDate: "Posted 3 days ago",
       salary: "$120,000 - $150,000",
       skills: ["React", "TypeScript", "CSS", "HTML", "Redux", "Jest"],
@@ -110,7 +99,7 @@ function getMockJobListings(): JobListing[] {
       location: "New York, NY",
       description:
         "Join our engineering team to build scalable web applications. You'll work on both frontend and backend development using modern JavaScript frameworks.",
-      url: "https://example.com/jobs/full-stack-engineer",
+      url: "https://www.indeed.com/viewjob?jk=abc123xyz456",
       postedDate: "Posted 1 week ago",
       salary: "$110,000 - $140,000",
       skills: ["JavaScript", "Node.js", "React", "MongoDB", "Express", "Git"],
@@ -124,12 +113,12 @@ function getMockJobListings(): JobListing[] {
       location: "Remote",
       description:
         "We're seeking a Backend Developer to help build our data processing systems. You'll work with Node.js and PostgreSQL to create efficient and scalable APIs.",
-      url: "https://example.com/jobs/backend-developer",
+      url: "https://www.glassdoor.com/job-listing/backend-developer-datasystems-JV123456789.htm",
       postedDate: "Posted 2 weeks ago",
       salary: "$100,000 - $130,000",
       skills: ["Node.js", "PostgreSQL", "Express", "API Design", "Docker", "AWS"],
       matchScore: 78,
-      source: "linkedin",
+      source: "other",
     },
     {
       id: "job4",
@@ -138,7 +127,7 @@ function getMockJobListings(): JobListing[] {
       location: "Seattle, WA (Hybrid)",
       description:
         "Looking for a DevOps Engineer to improve our CI/CD pipelines and infrastructure. You'll work with Kubernetes, Docker, and AWS to ensure smooth deployments.",
-      url: "https://example.com/jobs/devops-engineer",
+      url: "https://www.dice.com/jobs/detail/devops-engineer-cloudtech-12345",
       postedDate: "Posted 5 days ago",
       salary: "$130,000 - $160,000",
       skills: ["Kubernetes", "Docker", "AWS", "CI/CD", "Terraform", "Linux"],
@@ -152,7 +141,7 @@ function getMockJobListings(): JobListing[] {
       location: "Austin, TX",
       description:
         "Join our design team to create beautiful and intuitive user interfaces. You'll collaborate with developers and product managers to deliver exceptional user experiences.",
-      url: "https://example.com/jobs/ui-ux-designer",
+      url: "https://www.indeed.com/viewjob?jk=def789ghi012",
       postedDate: "Posted 2 days ago",
       salary: "$90,000 - $120,000",
       skills: ["Figma", "Adobe XD", "UI Design", "UX Research", "Prototyping", "Wireframing"],
@@ -160,4 +149,13 @@ function getMockJobListings(): JobListing[] {
       source: "indeed",
     },
   ]
+}
+
+export async function connectLinkedIn(): Promise<{ success: boolean; message: string }> {
+  // This would normally connect to LinkedIn's API
+  // For now, we'll just simulate a successful connection
+  return {
+    success: true,
+    message: "Successfully connected to LinkedIn",
+  }
 }

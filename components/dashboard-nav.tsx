@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useSession, signOut } from "next-auth/react"
+import { useTheme } from "next-themes"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +23,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 export default function DashboardNav() {
   const pathname = usePathname()
   const { data: session, status } = useSession()
+  const { theme } = useTheme()
 
   const navItems = [
     {
@@ -71,6 +73,9 @@ export default function DashboardNav() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
+            <span className="capitalize">{theme || 'system'} mode</span>
+          </div>
           <ModeToggle />
           {status === "authenticated" ? (
             <DropdownMenu>

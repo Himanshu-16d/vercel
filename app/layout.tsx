@@ -5,13 +5,14 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import DashboardNav from "@/components/dashboard-nav"
 import { AuthProvider } from "@/components/auth-provider"
+import Script from "next/script"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "HireSense AI - Smart Resume Builder & Job Finder",
   description: "Build professional resumes and find matching jobs with AI-powered tools",
-    generator: 'v0.dev'
+  generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -21,6 +22,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          src="https://platform.linkedin.com/in.js"
+          strategy="beforeInteractive"
+        >
+          {`
+            api_key: ${process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID}
+            authorize: true
+          `}
+        </Script>
+      </head>
       <body className={inter.className}>
         <AuthProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
